@@ -61,7 +61,7 @@ class ParticleFilterAnimation(object):
             theta = np.random.normal(self.conf['AVG_THETA'], 0.05)
             
             self.robot.move(self.conf['DT'], v, theta)
-            self.particleFilter.predict(self.conf['DT'] * v, theta, 
+            self.particleFilter.predict(self.conf['DT'] * v, self.conf['DT'] * theta, 
                                         self.conf['MOTION_STD'], 
                                         self.conf['THETA_STD'])
             weights = self.particleFilter.weights
