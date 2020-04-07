@@ -57,4 +57,10 @@ class ParticleFilter():
             resampled_particles += [deepcopy(self.particles[i])]
             
         self.particles = resampled_particles
-        self.weights = [1.0 / len(self.particles) for _ in range(0, len(self.particles))]
+        self.weights[:] = 1.0 / len(self.particles)
+
+    def resamplingNeeded(self):
+        weightsSquaredSum = np.sum(self.weights**2)
+        if weightsSquaredSum < 1e-10:
+            return True
+        return 1.0 / weightsSquaredSum  < 0.333 * len(self.particles)

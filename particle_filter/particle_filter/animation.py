@@ -85,7 +85,9 @@ class ParticleFilterAnimation(object):
             weights = self.particleFilter.weights
         
         if step == 'resample':
-            self.particleFilter.resample()
+            if self.particleFilter.resamplingNeeded():
+                self.particleFilter.resample()
+                print("Resample")
             weights = self.particleFilter.weights
 
         x, y, th = self.particleFilter.getSolution()
@@ -94,13 +96,10 @@ class ParticleFilterAnimation(object):
         return self.particleFilter.particles, weights, lines, (x, y), measurements, (x_true, y_true)
 
     def init(self):
-        self.particlesScatter.set_offsets(np.c_[[], []])
-        self.positionEst.set_data([], [])
-        self.positionTrue.set_data([], [])
-        self.text.set_text("STEP: " + "INITIALIZATION")
         return (self.particlesScatter, self.lines, self.positionEst, self.positionTrue, self.circles, self.text, )
 
     def __call__(self, i):
+        print(i)
         if i % 3 == 0:
             step = "predict"
         if i % 3 == 1:
