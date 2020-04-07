@@ -87,12 +87,15 @@ class ParticleFilterAnimation(object):
         if step == 'resample':
             if self.particleFilter.resamplingNeeded():
                 self.particleFilter.resample()
+                step = step + " = True"
+            else:
+                step = step + " = False"
             weights = self.particleFilter.weights
 
         x, y, th = self.particleFilter.getSolution()
         x_true, y_true, _ = self.robot.getPos()
 
-        return self.particleFilter.particles, weights, lines, (x, y), measurements, (x_true, y_true)
+        return self.particleFilter.particles, weights, lines, (x, y), measurements, (x_true, y_true), step
 
     def init(self):
         return (self.particlesScatter, self.lines, self.positionEst, self.positionTrue, self.circles, self.text, )
@@ -105,7 +108,7 @@ class ParticleFilterAnimation(object):
         if i % 3 == 2:
             step = "resample"
             
-        particles, weights, lines_coordinates, (x, y), measurements, (x_true, y_true) = self.moveState(step)
+        particles, weights, lines_coordinates, (x, y), measurements, (x_true, y_true), step = self.moveState(step)
         
         self.particlesScatter.set_offsets(np.c_[[p.x for p in particles], [p.y for p in particles]])
         normcolor = plt.Normalize(np.min(weights), np.max(weights))
