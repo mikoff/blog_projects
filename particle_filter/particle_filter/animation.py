@@ -87,7 +87,6 @@ class ParticleFilterAnimation(object):
         if step == 'resample':
             if self.particleFilter.resamplingNeeded():
                 self.particleFilter.resample()
-                print("Resample")
             weights = self.particleFilter.weights
 
         x, y, th = self.particleFilter.getSolution()
@@ -99,7 +98,6 @@ class ParticleFilterAnimation(object):
         return (self.particlesScatter, self.lines, self.positionEst, self.positionTrue, self.circles, self.text, )
 
     def __call__(self, i):
-        print(i)
         if i % 3 == 0:
             step = "predict"
         if i % 3 == 1:
