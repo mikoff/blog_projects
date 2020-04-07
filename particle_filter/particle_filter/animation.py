@@ -14,6 +14,8 @@ class ParticleFilterAnimation(object):
         self.conf = configuration
         self.anchors = anchors
         
+        ax.set(title = "Particle filter state", xlabel = "$x$, meters", ylabel = "$y$, meters")
+
         conf = self.conf
         self.robot = Robot(conf['robot_start_x'], conf['robot_start_y'], conf['robot_start_theta'])
         self.particleFilter = ParticleFilter(
@@ -28,7 +30,7 @@ class ParticleFilterAnimation(object):
             [p.x for p in self.particleFilter.particles], [p.y for p in self.particleFilter.particles], 
             c=np.arange(conf['PARTICLES_NUM']), marker='.', alpha=0.5, cmap=plt.cm.rainbow, norm=normcolor, s=0.5,
             label='particles')
-        cb = fig.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.rainbow), ax = ax)
+        cb = fig.colorbar(plt.cm.ScalarMappable(cmap=plt.cm.rainbow), ax = ax, shrink=0.8)
         cb.set_label('Relative particle weight')
         
         self.anchorsScatter = self.ax.scatter([a.x for a in anchors], [a.y for a in anchors], 
@@ -38,9 +40,9 @@ class ParticleFilterAnimation(object):
         lc = mc.LineCollection(lines_coordinates, linewidths=1)
         self.lines = self.ax.add_collection(lc)
         
-        self.positionEst, = self.ax.plot([0.0], [0.0], marker='o', markersize=6, color="violet", alpha=0.9,
+        self.positionEst, = self.ax.plot([0.0], [0.0], marker='x', markersize=9, color="green", alpha=0.98,
                                         label='Estimated position')
-        self.positionTrue, = self.ax.plot([0.0], [0.0], marker='+', markersize=5, color="black", alpha=0.9,
+        self.positionTrue, = self.ax.plot([0.0], [0.0], marker='+', markersize=9, color="black",
                                         label='True position')
         
         self.text = ax.text(conf['MIN_X'] + (conf['MIN_X'] + conf['MAX_X']) * 0.5, 
@@ -48,7 +50,7 @@ class ParticleFilterAnimation(object):
 
 
         centers = np.array([[a.x, a.y] for a in anchors])
-        cl = mc.EllipseCollection([1.] * 9, [1.] * 9, [1.] * 9, 
+        cl = mc.EllipseCollection([1.] * len(anchors), [1.] * len(anchors), [1.] * len(anchors), 
             offsets=centers, transOffset=ax.transData, units='xy', facecolors='none', color='black', alpha=0.5)
         self.circles = ax.add_collection(cl)
         self.circles.set_facecolor('none')
