@@ -33,7 +33,7 @@ anim = animation.FuncAnimation(fig, liveParticleFilter, init_func = liveParticle
                      frames = 900, interval = 120, blit = True, repeat=False)
 plt.tight_layout()
 
-SAVE_TO_FILE_FLAG = True
+SAVE_TO_FILE_FLAG = False
 
 if SAVE_TO_FILE_FLAG:
     plt.rcParams['savefig.dpi'] = 200
