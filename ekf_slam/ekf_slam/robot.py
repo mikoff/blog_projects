@@ -1,7 +1,6 @@
 import numpy as np
 
-def wrapToPi(angle):
-    return (angle + np.pi) % (2 * np.pi) - np.pi
+from ekf_slam.helpers import wrapToPi
 
 class Robot():
     def __init__(self, x0, y0, theta0, v_std_noise, omega_std_noise, max_ranging_distance, distance_meas_std, bearing_meas_std):
@@ -21,10 +20,6 @@ class Robot():
         self.x += velocity * np.cos(self.theta) * dt
         self.y += velocity * np.sin(self.theta) * dt
         self.theta += omega * dt
-
-        # self.x += velocity / omega * (-np.sin(self.theta) + np.sin(self.theta + omega * dt))
-        # self.y += velocity / omega * (np.cos(self.theta) - np.cos(self.theta + omega * dt))
-        # self.theta += omega * dt
 
         return dt, velocity + np.random.normal(0, self.v_std_noise), omega + np.random.normal(0, self.omega_std_noise) + self.omega_bias
         

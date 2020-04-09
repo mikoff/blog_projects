@@ -1,7 +1,6 @@
 import numpy as np
 
-def wrapToPi(angle):
-    return (angle + np.pi) % (2 * np.pi) - np.pi
+from ekf_slam.helpers import wrapToPi
 
 class EkfSlam():
     def __init__(self, startX, startY, startTheta,

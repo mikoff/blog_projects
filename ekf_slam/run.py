@@ -5,14 +5,14 @@ from matplotlib import animation
 
 from ekf_slam.ekf_slam import EkfSlam
 from ekf_slam.robot import Robot
-from ekf_slam.map import generateLandmarkArray
+from ekf_slam.helpers import generateLandmarkArray
 from ekf_slam.animation import EkfSlamAnimation
 
 np.set_printoptions(edgeitems=30, linewidth=1000, formatter={'float': '{: 0.4f}'.format})
 
-VEL_STD_NOISE, OMEGA_STD_NOISE = 0.1, np.deg2rad(0.5)
+VEL_STD_NOISE, OMEGA_STD_NOISE = 0.5, np.deg2rad(2.5)
 OMEGA_BIAS_STD_NOISE = 0.005
-DISTANCE_STD_NOISE, BEARING_STD_NOISE = 1.0, np.deg2rad(5.0)
+DISTANCE_STD_NOISE, BEARING_STD_NOISE = 3.0, np.deg2rad(15.0)
 MAX_RANGING_DISTANCE = 30.0
 START_X, START_Y, START_THETA = -30.0, -30.0, 0.0
 
