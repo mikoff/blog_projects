@@ -5,16 +5,17 @@ from matplotlib import animation
 
 from ekf_slam.ekf_slam import EkfSlam
 from ekf_slam.robot import Robot
-from ekf_slam.helpers import generateLandmarkArray
+from ekf_slam.helpers import generateLandmarkArray, RobotMover
 from ekf_slam.animation import EkfSlamAnimation
 
 np.set_printoptions(edgeitems=30, linewidth=1000, formatter={'float': '{: 0.4f}'.format})
 
-VEL_STD_NOISE, OMEGA_STD_NOISE = 0.5, np.deg2rad(2.5)
+VEL_STD_NOISE, OMEGA_STD_NOISE = 0.1, np.deg2rad(0.5)
 OMEGA_BIAS_STD_NOISE = 0.005
 DISTANCE_STD_NOISE, BEARING_STD_NOISE = 3.0, np.deg2rad(15.0)
 MAX_RANGING_DISTANCE = 30.0
 START_X, START_Y, START_THETA = -30.0, -30.0, 0.0
+EXTEND_PLOT_BOUND = 30
 
 landmarks = generateLandmarkArray([
     [-40, -40], [-20, -20], [-20, -30],
@@ -31,9 +32,12 @@ ekfSlam = EkfSlam(START_X, START_Y, START_THETA,
 robot = Robot(START_X, START_Y, START_THETA, 
     VEL_STD_NOISE, OMEGA_STD_NOISE, MAX_RANGING_DISTANCE, DISTANCE_STD_NOISE, BEARING_STD_NOISE)
 
+robotMover = RobotMover("random", [np.min(landmarks['x']) - EXTEND_PLOT_BOUND, np.max(landmarks['x']) + EXTEND_PLOT_BOUND],
+    [np.min(landmarks['y']) - EXTEND_PLOT_BOUND, np.max(landmarks['y']) + EXTEND_PLOT_BOUND])
+
 plt.ioff()
 fig, ax = plt.subplots(1, 2, figsize=(16, 9), gridspec_kw={'width_ratios': [1, 1.18]})
-ekfSlamAnimation = EkfSlamAnimation(fig, ax, landmarks, robot, ekfSlam)
+ekfSlamAnimation = EkfSlamAnimation(fig, ax, landmarks, robot, ekfSlam, EXTEND_PLOT_BOUND, robotMover)
 anim = animation.FuncAnimation(fig, ekfSlamAnimation, init_func = ekfSlamAnimation.init,
                      frames = 3600, interval = 25, blit = True, repeat=True)
 

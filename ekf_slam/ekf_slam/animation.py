@@ -9,7 +9,7 @@ import numpy as np
 from ekf_slam.helpers import *
 
 class EkfSlamAnimation(object):
-    def __init__(self, fig, ax, landmarksTruePositions, robot, ekfSlam, extendPlot = 30):
+    def __init__(self, fig, ax, landmarksTruePositions, robot, ekfSlam, extendPlot, controller):
         self.fig = fig
         self.ax = ax[0]
         self.landmarks = landmarksTruePositions
@@ -70,31 +70,15 @@ class EkfSlamAnimation(object):
         self.ax.add_patch(self.positionConfidenceEllipse)
 
         self.i = 0
-        self.choices = [0]
-        self.reminder = 20
+
+        self.controller = controller
 
         plt.tight_layout()
         
     def moveState(self):
-        # theta = 0.0
-        # if self.robot.x > self.ax.get_xlim()[1] or self.robot.y < self.ax.get_ylim()[0] \
-        #     or self.robot.x < self.ax.get_xlim()[0] or self.robot.y > self.ax.get_ylim()[1]:
-        #     theta = np.deg2rad(np.random.randint(110, 270))
-        #     self.reminder = np.random.randint(50, 100)
-        #     self.i = 0
-        #     self.choices = [0]
-        # elif self.i % self.reminder == 0:
-        #     self.choices = np.random.randint(-6, 6, size=10)
-        #     self.reminder = np.random.randint(20, 40)
-        #     self.i = 0
-        # self.i += 1
-        # theta = theta + 0.15 * np.random.choice(self.choices)
-        theta = 0.0
-        self.i += 1
-        if self.i % 300 == 0:
-            theta = np.pi * 10 / 2
+        dt, uV, uTheta = self.controller.getControls(self.robot.x, self.robot.y)
 
-        dt, vMeasured, omegaMeasured = self.robot.move(0.1, 2.5, theta)
+        dt, vMeasured, omegaMeasured = self.robot.move(dt, uV, uTheta)
         self.ekfSlam.predict(dt, vMeasured, omegaMeasured)
 
         distancesMeasured = self.robot.measureDistancesToLandmarks(self.landmarks)
@@ -115,7 +99,7 @@ class EkfSlamAnimation(object):
             self.landmarkMeasurementsScatter, self.im, self.text, self.confidenceEllipses, self.positionConfidenceEllipse, )
 
     def __call__(self, frameIdx):
-        print(frameIdx)
+        # print(frameIdx)
         truePose, estPose, measurements, estimatedLandmarksCoordinates = self.moveState()
         truePoseX, truePoseY, trueTheta = truePose
         estPoseX, estPoseY, estTheta = estPose
@@ -150,11 +134,12 @@ class EkfSlamAnimation(object):
 
         idxs = np.isfinite(distanceMeasurements)
         numValid = np.sum(idxs)
-        self.landmarkMeasurementsScatter._offsets = np.roll(self.landmarkMeasurementsScatter._offsets, -numValid, 0)
-        self.landmarkMeasurementsScatter._offsets[-numValid:, :] = measurementEndPoints[idxs]
+        if numValid > 0:
+            self.landmarkMeasurementsScatter._offsets = np.roll(self.landmarkMeasurementsScatter._offsets, -numValid, 0)
+            self.landmarkMeasurementsScatter._offsets[-numValid:, :] = measurementEndPoints[idxs]
 
-        self.landmarkMeasurementsScatter._facecolors = np.roll(self.landmarkMeasurementsScatter._facecolors, -numValid, 0)
-        self.landmarkMeasurementsScatter._facecolors[-numValid:, :] = self.localcm[idxs]
+            self.landmarkMeasurementsScatter._facecolors = np.roll(self.landmarkMeasurementsScatter._facecolors, -numValid, 0)
+            self.landmarkMeasurementsScatter._facecolors[-numValid:, :] = self.localcm[idxs]
 
         covarianceMatrix = self.ekfSlam.getCovarianceMatrix()
         covarianceMatrix[covarianceMatrix > 1000] = np.max(covarianceMatrix[covarianceMatrix < 1000])

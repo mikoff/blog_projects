@@ -55,3 +55,44 @@ def getEllipsoidParametersFor2dCovariance(cov):
     height = np.sqrt(lambda2) * 2 * 3
     
     return width, height, angle
+
+class RobotMover():
+    def __init__(self, motionType, xlimits, ylimits):
+        self.reminder = 200
+        self.i = 0
+        self.choices = np.random.randint(-6, 6, size=10)
+
+        if motionType == "rectangle":
+            self.mover = self.rectangleMover
+        else:
+            self.mover = self.randomMover
+
+        self.xmin = xlimits[0]
+        self.xmax = xlimits[1]
+        self.ymin = ylimits[0]
+        self.ymax = ylimits[1]
+
+    def getControls(self, robotX, robotY):
+        self.i += 1
+        return self.mover(robotX, robotY)
+
+    def rectangleMover(self, robotX, robotY):
+        theta = 0.0
+        if self.i % 300 == 0:
+            theta = np.pi * 10 / 2
+
+        return 0.1, 2.5, theta
+
+    def randomMover(self, robotX, robotY):
+        theta = 0.0
+        if robotX > self.xmax or robotX < self.xmin or robotY > self.ymax or robotY < self.ymin:
+            theta = np.deg2rad(np.random.randint(110, 270))
+            self.reminder = np.random.randint(100, 200)
+            self.choices = [0]
+        elif self.i % self.reminder == 0:
+            self.choices = np.random.randint(-6, 6, size=10)
+            self.reminder = np.random.randint(200, 400)
+
+        theta = theta + 0.15 * np.random.choice(self.choices)
+
+        return 0.1, 2.5, theta
