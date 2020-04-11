@@ -153,14 +153,14 @@ class EkfSlamAnimation(object):
             w, h, a = getEllipsoidParametersFor2dCovariance(self.ekfSlam.Sigma[idxCovStart:idxCovEnd, idxCovStart:idxCovEnd])
             self.confidenceEllipses._widths[i] = w
             self.confidenceEllipses._heights[i] = h
-            self.confidenceEllipses._angles[i] = np.rad2deg(a)
+            self.confidenceEllipses._angles[i] = a
             self.confidenceEllipses._offsets[i, 0] = estimatedLandmarkCoordinatesX[i]
             self.confidenceEllipses._offsets[i, 1] = estimatedLandmarkCoordinatesY[i]
 
         w, h, a = getEllipsoidParametersFor2dCovariance(self.ekfSlam.Sigma[0:2, 0:2])
         self.positionConfidenceEllipse.width = w
         self.positionConfidenceEllipse.height = h
-        self.positionConfidenceEllipse.angle = np.rad2deg(a)
+        self.positionConfidenceEllipse.angle = a
         self.positionConfidenceEllipse.center = (estPoseX, estPoseY)
 
         return (self.positionTrue, self.positionEst, self.distanceAndBearingLines, self.landmarksEstimatedPositionsScatter, 
