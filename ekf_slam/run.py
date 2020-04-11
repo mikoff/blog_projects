@@ -22,8 +22,8 @@ landmarks = generateLandmarkArray([
     [0, -30], [15, -30], [30, -30],
     [30.0, -5.0], [45, -5.0], [45, -20], [30, -20],
     [20, 20], [30, 30], [40, 40], [50, 50.],
-    [-45, 0], [-35, 10], [-25, 0], 
-    [-50, 50], [-40, 40], [-30, 50], [-20, 40]])
+    [-50, 50], [-40, 40], [-30, 50], [-20, 40],
+    [-45, 0], [-35, 10], [-25, 0]])
 
 np.random.seed(20)
 
@@ -39,7 +39,7 @@ plt.ioff()
 fig, ax = plt.subplots(1, 2, figsize=(16, 9), gridspec_kw={'width_ratios': [1, 1.18]})
 ekfSlamAnimation = EkfSlamAnimation(fig, ax, landmarks, robot, ekfSlam, EXTEND_PLOT_BOUND, robotMover)
 anim = animation.FuncAnimation(fig, ekfSlamAnimation, init_func = ekfSlamAnimation.init,
-                     frames = 3600, interval = 25, blit = True, repeat=True)
+                     frames = 3600, interval = 10, blit = True, repeat=True)
 
 SAVE_TO_FILE_FLAG = False
 
